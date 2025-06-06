@@ -1,0 +1,67 @@
+{
+  "id": "master",
+  "realm": "master",
+  "displayName": "Master Realm (imported)",
+  "enabled": true,
+  "roles": {
+    "realm": [
+      {
+        "name": "admin",
+        "description": "Rolę admin przypisujemy użytkownikowi admin1"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "myclient",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "pkce.code.challenge.required": "true"
+      },
+      "redirectUris": [
+        "*"
+      ],
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "defaultClientScopes": [
+        "openid",
+        "profile",
+        "email"
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "test",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "test",
+          "temporary": false
+        }
+      ],
+      "realmRoles": []
+    },
+    {
+      "username": "admin1",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin1",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "admin"
+      ]
+    }
+  ]
+}
