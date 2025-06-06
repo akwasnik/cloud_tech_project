@@ -1,6 +1,6 @@
 const amqp = require('amqplib');
 
-const RABBIT_URL = process.env.RABBITMQ_URL || 'amqp://guest:guest@rabbitmq:5672';
+const RABBIT_URL = `amqp://guest:guest@rabbitmq:${process.env.RABBITMQ_PORT || 5672}`;
 
 async function publishToQueue(queueName, messageObj) {
   // 1) Połącz się z RabbitMQ

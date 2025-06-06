@@ -177,7 +177,7 @@ function App() {
             className="p-m-2"
           />
           <Button
-            onClick={() => kc.logout({ redirectUri: `http://localhost:${process.env.CLIENT_PORT || 80}` })}
+            onClick={() => kc.logout({ redirectUri: `http://localhost:${process.env.CLIENT_PORT || 9000}` })}
             label="Logout"
             severity="danger"
             className="p-m-2"

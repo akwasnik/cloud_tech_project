@@ -16,7 +16,7 @@
         "pkce.code.challenge.required": "true"
       },
       "redirectUris": [
-        "http://localhost/*"
+        "http://localhost:9000/*"
       ],
       "standardFlowEnabled": true,
       "directAccessGrantsEnabled": true,

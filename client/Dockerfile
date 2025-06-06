@@ -8,4 +8,9 @@ COPY . .
 RUN npm run build
 
 FROM nginx:1.27.5-alpine
+
 COPY --from=builder /build/build /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/nginx.conf
+
+EXPOSE 9000
+

@@ -50,6 +50,7 @@ services:
       - PORT=${SERVER_PORT}
       - REDIS_PORT=${REDIS_PORT}
       - DB_PORT=${POSTGRES_PORT}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
     networks:
       - app-net
     depends_on:
