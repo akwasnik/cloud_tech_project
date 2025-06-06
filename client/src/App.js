@@ -1,7 +1,6 @@
-// src/App.js
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import './style.css';                          // <-- nowy, ładniejszy CSS
+import './style.css';
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import 'primeflex/primeflex.css';
@@ -38,6 +37,7 @@ kc.init({
 });
 /* ----------------------------------------------------------- */
 
+
 function App() {
   /* --------- stany ogólne --------- */
   const [infoMessage, setInfoMessage] = useState('');
@@ -56,12 +56,36 @@ function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
 
+    /* ---------- stany dla RabbitMQ ---------- */
+  const [taskPayload, setTaskPayload] = useState('');
+  const [queueResponse, setQueueResponse] = useState('');
+
   /* ------------- sprawdzenie roli po zalogowaniu  ------------- */
   useEffect(() => {
     if (kc.authenticated) {
       setIsAdmin(kc.hasRealmRole('admin'));
     }
   }, [kc.authenticated, kc.token]);
+
+  
+  /* -------- obsługa enqueuing (RabbitMQ) -------- */
+  const handleEnqueue = async (e) => {
+    e.preventDefault();
+    try {
+      let body;
+      try {
+        body = JSON.parse(taskPayload);
+      } catch {
+        body = { text: taskPayload };
+      }
+      const res = await httpClient.post('/enqueue', body);
+      setQueueResponse(res.data.status);
+      setTaskPayload('');
+    } catch (err) {
+      console.error(err);
+      setQueueResponse('Błąd przy wysyłaniu do kolejki');
+    }
+  };
 
   /* ------- obsługa dodawania użytkownika (do PostgreSQL!) ------- */
   const handleUserSubmit = async (e) => {
@@ -280,6 +304,26 @@ function App() {
 
         <div className="result-box">
           <pre>{messagesList}</pre>
+        </div>
+      </section>
+
+       {/* ====== RabbitMQ ====== */}
+      <section className="rabbitmq-container">
+        <h2>📥 Queue Tasks (RabbitMQ)</h2>
+        <form onSubmit={handleEnqueue}>
+          <input
+            type="text"
+            name="task"
+            placeholder="Wprowadź treść zadania (JSON lub tekst)"
+            required
+            value={taskPayload}
+            onChange={(e) => setTaskPayload(e.target.value)}
+            className="p-inputtext"
+          />
+          <Button type="submit" label="Send to Queue" className="p-mt-2 p-button-primary" />
+        </form>
+        <div className="result-box" style={{ marginTop: '12px' }}>
+          <pre>{queueResponse}</pre>
         </div>
       </section>
 

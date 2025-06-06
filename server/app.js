@@ -4,6 +4,7 @@ const { Client } = require('pg');
 const bodyParser = require('body-parser');
 const path = require('path');
 const cors = require('cors');
+const { publishToQueue } = require('./amqp');
 
 
 
@@ -121,6 +122,52 @@ app.get('/users', async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 });
+
+// ---- AMQP ENDPOINTS ----
+
+app.post('/enqueue', async (req, res) => {
+  const payload = req.body; 
+  if (!payload || Object.keys(payload).length === 0) {
+    return res.status(400).json({ error: 'Brak danych do kolejki' });
+  }
+
+  try {
+    await publishToQueue('tasks_queue', payload);
+    res.json({ status: 'Wysłano do kolejki', queue: 'tasks_queue' });
+  } catch (err) {
+    console.error('Błąd publikacji do RabbitMQ:', err);
+    res.status(500).json({ error: 'Nie udało się wysłać do kolejki' });
+  }
+});
+
+async function startConsumer() {
+  const amqp = require('amqplib');
+  const connection = await amqp.connect(process.env.RABBITMQ_URL || 'amqp://guest:guest@rabbitmq:5672');
+  const channel = await connection.createChannel();
+  await channel.assertQueue('tasks_queue', { durable: true });
+  channel.prefetch(1);
+
+  console.log(' [*] Oczekuję na wiadomości w kolejce tasks_queue ...');
+  channel.consume('tasks_queue', async (msg) => {
+    if (msg !== null) {
+      const content = msg.content.toString();
+      let data;
+      try {
+        data = JSON.parse(content);
+      } catch (e) {
+        console.error('Niepoprawny JSON w kolejce:', content);
+        channel.ack(msg);
+        return;
+      }
+
+      console.log(' [x] Otrzymano zadanie:', data);
+      channel.ack(msg);
+    }
+  }, { noAck: false });
+}
+
+
+startConsumer().catch(console.error);
 
 
 app.listen(3050, () => {
