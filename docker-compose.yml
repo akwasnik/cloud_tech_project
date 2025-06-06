@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
 
   keycloak:
@@ -16,7 +14,7 @@ services:
       - "${KEYCLOAK_PORT}:${KEYCLOAK_PORT}"
     networks:
       - app-net
-    restart: unless-stopped
+    restart: always
 
   client:
     build: ./client
@@ -27,6 +25,9 @@ services:
       - app-net
     environment:
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - SERVER_PORT=${SERVER_PORT}
+      - CLIENT_PORTPORT=${CLIENT_PORT}
+      - KEYCLOAK_PORT=${KEYCLOAK_PORT}
     depends_on:
       - rabbitmq
 
@@ -45,6 +46,10 @@ services:
     ports:
       - "${SERVER_PORT}:${SERVER_PORT}"
     command: node app.js
+    environment:
+      - PORT=${SERVER_PORT}
+      - REDIS_PORT=${REDIS_PORT}
+      - DB_PORT=${POSTGRES_PORT}
     networks:
       - app-net
     depends_on:

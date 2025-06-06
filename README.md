@@ -24,6 +24,8 @@
      - **Server** (Node.js backend)
      - **Client** (frontend)
 
+#### OPTIONALLY CHANGE KEYCLOACK DEFAULT SETTINGS IN master-realm.json
+
 ### Environment Variables & Ports
 
 All port mappings come from the `.env` file. By default, the following ports are exposed:

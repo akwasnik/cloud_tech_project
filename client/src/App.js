@@ -9,9 +9,12 @@ import { Card } from 'primereact/card';
 import { httpClient } from './HttpClient';
 import Keycloak from 'keycloak-js';
 
+const server_url = `http://localhost:${process.env.SERVER_PORT || 3050}`; // URL do backendu
+const keycloak_url = `http://localhost:${process.env.KEYCLOAK_PORT || 8080}`; // URL do Keycloak
+
 /* ---------------------- Keycloak setup ---------------------- */
 let initOptions = {
-  url: 'http://localhost:8080/',
+  url: keycloak_url,
   realm: 'master',
   clientId: 'myclient',
 };
@@ -92,7 +95,7 @@ function App() {
     e.preventDefault();
     try {
       const payload = { name, surname, isAdult };
-      const res = await fetch('http://localhost:3050/users', {
+      const res = await fetch(`${server_url}/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -111,7 +114,7 @@ function App() {
   /* ---------------- pobierz wszystkich użytkowników z PostgreSQL --------------- */
   const fetchUsers = async () => {
     try {
-      const res = await fetch('http://localhost:3050/users');
+      const res = await fetch(`${server_url}/users`);
       const users = await res.json();
       setUsersList(JSON.stringify(users, null, 2));
     } catch (err) {
@@ -124,7 +127,7 @@ function App() {
   const handleMessageSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:3050/message', {
+      const res = await fetch(`${server_url}/message`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message })
@@ -141,7 +144,7 @@ function App() {
   /* ---------------- pobierz wszystkie wiadomości z Redis --------------- */
   const fetchMessages = async () => {
     try {
-      const res = await fetch('http://localhost:3050/messages');
+      const res = await fetch(`${server_url}/messages`);
       const data = await res.json();
       setMessagesList(JSON.stringify(data.messages, null, 2));
     } catch (err) {
@@ -174,7 +177,7 @@ function App() {
             className="p-m-2"
           />
           <Button
-            onClick={() => kc.logout({ redirectUri: 'http://localhost/' })}
+            onClick={() => kc.logout({ redirectUri: `http://localhost:${process.env.CLIENT_PORT || 80}` })}
             label="Logout"
             severity="danger"
             className="p-m-2"

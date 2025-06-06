@@ -17,7 +17,7 @@ const db = new Client({
   user: 'user',
   password: 'pass',
   database: 'mydb',
-  port: 5432,  
+  port: process.env.DB_PORT || 5432,  
   connectionTimeoutMillis: 10000
 });
 
@@ -46,9 +46,8 @@ db.connect(err => {
 // ---- REDIS PART ----
 
 
-
 const redisClient = redis.createClient({
-  url: 'redis://redis:6379'
+  url: `redis://redis:${process.env.REDIS_PORT || 6379}`,
 });
 
 
@@ -170,6 +169,6 @@ async function startConsumer() {
 startConsumer().catch(console.error);
 
 
-app.listen(3050, () => {
-  console.log(`Server listening on port 3050`);
+app.listen(process.env.PORT || 3050, () => {
+  console.log(`Server listening on port ${process.env.PORT || 3050}`);
 });
