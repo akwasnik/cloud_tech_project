@@ -27,7 +27,7 @@ services:
       - app-net
 
   redis:
-    image: redis:latest
+    image: redis:8-alpine
     ports:
       - "${REDIS_PORT}:${REDIS_PORT}"
     volumes:
@@ -47,7 +47,7 @@ services:
         condition: service_healthy
   
   db:
-    image: postgres:latest
+    image: postgres:17.5
     container_name: db
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
