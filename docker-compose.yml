@@ -2,17 +2,34 @@ version: '3.8'
 
 services:
 
-  client:
-    build: ./client/.
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.1.4
+    container_name: keycloak
+    command: ["start-dev", "--import-realm", "--verbose"]
+    environment:
+      - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+      - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
+      - KEYCLOAK_IMPORT=/opt/keycloak/data/import/master-realm.json
+    volumes:
+      - ./master-realm.json:/opt/keycloak/data/import/master-realm.json:ro
     ports:
-      - "${CLIENT_PORT}:80"
+      - "${KEYCLOAK_PORT}:${KEYCLOAK_PORT}"
+    networks:
+      - app-net
+    restart: unless-stopped
+
+  client:
+    build: ./client
+    image: client:latest
+    ports:
+      - "${CLIENT_PORT}:${CLIENT_PORT}"
     networks:
       - app-net
 
   redis:
     image: redis:latest
     ports:
-      - "${REDIS_PORT}:6379"
+      - "${REDIS_PORT}:${REDIS_PORT}"
     volumes:
       - redis_data:/data
     networks:
@@ -21,7 +38,7 @@ services:
   server:
     build: ./server/.
     ports:
-      - "${SERVER_PORT}:3000"
+      - "${SERVER_PORT}:${SERVER_PORT}"
     command: node app.js
     networks:
       - app-net
@@ -37,7 +54,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     networks:
       - app-net
     volumes:
@@ -48,19 +65,6 @@ services:
       retries: 5
       timeout: 5s
 
-  keycloak:
-    image: quay.io/keycloak/keycloak:26.1.4
-    container_name: keycloak
-    command: ["start-dev", "--import-realm"]
-    environment:
-      - KC_BOOTSTRAP_ADMIN_USERNAME=bootstrap-admin
-      - KC_BOOTSTRAP_ADMIN_PASSWORD=bootstrap-admin
-      - KEYCLOAK_IMPORT=/opt/keycloak/data/import/master-realm.json
-    volumes:
-      - ./master-realm.json:/opt/keycloak/data/import/master-realm.json:ro
-    ports:
-      - "8080:8080"
-    restart: unless-stopped
 
 networks:
   app-net:

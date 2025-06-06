@@ -3,14 +3,8 @@
   "realm": "master",
   "displayName": "Master Realm (imported)",
   "enabled": true,
-  "roles": {
-    "realm": [
-      {
-        "name": "admin",
-        "description": "Rolę admin przypisujemy użytkownikowi admin1"
-      }
-    ]
-  },
+  "passwordPolicy": "length(4)",
+  
   "clients": [
     {
       "clientId": "myclient",
@@ -22,18 +16,14 @@
         "pkce.code.challenge.required": "true"
       },
       "redirectUris": [
-        "*"
+        "http://localhost/*"
       ],
       "standardFlowEnabled": true,
       "directAccessGrantsEnabled": true,
-      "serviceAccountsEnabled": false,
-      "defaultClientScopes": [
-        "openid",
-        "profile",
-        "email"
-      ]
+      "serviceAccountsEnabled": false
     }
   ],
+
   "users": [
     {
       "username": "test",
