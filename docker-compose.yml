@@ -29,7 +29,7 @@ services:
       - CLIENT_PORTPORT=${CLIENT_PORT}
       - KEYCLOAK_PORT=${KEYCLOAK_PORT}
     depends_on:
-      - rabbitmq
+      - keycloak
 
 
   redis:
@@ -55,6 +55,8 @@ services:
       - app-net
     depends_on:
       db:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
   
   db:
@@ -85,6 +87,11 @@ services:
       environment:
         RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
         RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      healthcheck:
+        test: ["CMD-SHELL", "rabbitmq-diagnostics ping -q"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
       networks:
         - app-net
 

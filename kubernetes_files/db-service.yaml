@@ -3,7 +3,7 @@ kind: Service
 metadata:
   annotations:
     kompose.cmd: kompose convert
-    kompose.version: 1.34.0 (cbf2835db)
+    kompose.version: 1.36.0 (ae2a39403)
   labels:
     io.kompose.service: db
   name: db

@@ -1,6 +1,6 @@
 # export $(grep -v '^#' .env | xargs) ustaw zmienne srodowiskowe z pliku .env
 
-docker build -t <dockerhub_username>/client:1.0.0 ./client
+docker build -t <dockerhub_username>/client:1.0.0 ./client;
 docker build -t <dockerhub_username>/server:1.0.0 ./server
 
 kompose convert
@@ -18,27 +18,41 @@ kompose convert
 # ustawic image na <dockerhub_username>/server:1.0.0 i <dockerhub_username>/client:1.0.0
 
 
-kubectl apply -f client-deployment.yaml;
-kubectl apply -f db-deployment.yaml ;
-kubectl apply -f keycloak-deployment.yaml ;
-kubectl apply -f redis-deployment.yaml ;
-kubectl apply -f rabbitmq-deployment.yaml ;
-kubectl apply -f rabbitmq-service.yaml ;
-kubectl apply -f redis-service.yaml ;
-kubectl apply -f keycloak-service.yaml ;
-kubectl apply -f client-service.yaml ;
-kubectl apply -f db-data-persistentvolumeclaim.yaml ;
-kubectl apply -f db-service.yaml ;
+kubectl apply -f ./kubernetes_files/client-deployment.yaml;
+kubectl apply -f ./kubernetes_files/db-deployment.yaml ;
+kubectl apply -f ./kubernetes_files/db-data-persistentvolumeclaim.yaml ;
+kubectl apply -f ./kubernetes_files/keycloak-deployment.yaml ;
+kubectl apply -f ./kubernetes_files/keycloak-cm0-configmap.yaml;
+kubectl apply -f ./kubernetes_files/redis-deployment.yaml ;
+kubectl apply -f ./kubernetes_files/redis-data-persistentvolumeclaim.yaml ;
+kubectl apply -f ./kubernetes_files/rabbitmq-deployment.yaml ;
+kubectl apply -f ./kubernetes_files/rabbitmq-service.yaml ;
+kubectl apply -f ./kubernetes_files/redis-service.yaml ;
+kubectl apply -f ./kubernetes_files/keycloak-service.yaml ;
+kubectl apply -f ./kubernetes_files/client-service.yaml ;
+kubectl apply -f ./kubernetes_files/db-service.yaml ;
 
-# wait for like 30 secodns for db to be ready
+# wait for like 30 secodns for db to be healthy
 
-kubectl apply -f .
+# kubectl get pods
+
+kubectl apply -f ./kubernetes_files/server-deployment.yaml ;
+kubectl apply -f ./kubernetes_files/server-service.yaml ;
 
 kubectl get pods
 
 kubectl port-forward svc/client 9000:9000 & \
-kubectl port-forward svc/db 5432:5432 & \
-kubectl port-forward svc/keycloak 8080:8080 & \
+kubectl port-forward svc/db 5432:5432  & \
+kubectl port-forward svc/keycloak 8080:8080  & \
 kubectl port-forward svc/rabbitmq 5672:5672 15672:15672 & \
-kubectl port-forward svc/redis 6379:6379 & \
+kubectl port-forward svc/redis 6379:6379  & \
 kubectl port-forward svc/server 3050:3050 &
+
+# pkill cubectl ( bo dzialaja w tle )
+
+# delete all pods,services,deployments,replicasets
+
+kubectl delete pod --all;
+kubectl delete service --all;
+kubectl delete deployment --all;
+kubectl delete replicaset --all;
