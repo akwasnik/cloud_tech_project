@@ -23,6 +23,7 @@
      - **Redis**
      - **Server** (Node.js backend)
      - **Client** (frontend)
+     - **RabbitMQ**
 
 #### OPTIONALLY CHANGE KEYCLOACK DEFAULT SETTINGS IN master-realm.json
 
@@ -59,6 +60,14 @@ All port mappings come from the `.env` file. By default, the following ports are
   - Admin user: `admin`  
     Admin password: `admin`  
   - The realm is imported from `master-realm.json` on startup.
+
+  - **RabbitMQ**  
+  - Env var: `RABBITMQ_PORT=5672`
+  - Env var: `RABBITMQ_WEB_PORT=15672`
+  - Mapped port: `0.0.0.0:5672 → container:5672`
+  - Mapped port: `0.0.0.0:15672 → container:15672`
+  - Default user: `guest`  
+  - Default password: `guest`
 
 ### Verifying the Setup
   Open a browser to `http://localhost:80`
