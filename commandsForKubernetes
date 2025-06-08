@@ -5,8 +5,8 @@ docker build -t <dockerhub_username>/server:1.0.0 ./server
 
 kompose convert
 
-
-# command: to zmienic w postgres
+# to zmienic w postgres
+# command: 
 #                 - pg_isready
 #                 - -U
 #                 - user
