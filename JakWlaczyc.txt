@@ -1,0 +1,47 @@
+Admin: 
+    user: admin1
+    password: admin1
+
+TestUser: 
+    user: test
+    password: test
+
+rabbitmqWeb: 
+    user: guest
+    password: guest
+    
+keycloakWeb: 
+    user: admin
+    password: admin
+
+Jeżeli chodzi o docker to po prostu w będąć w folderze Projektu należy zrobić docker compose up.
+
+Porty zapisane są w plkiu .env i w tym pliku można je zmieniać. Natomiast jeżeli chcemy
+zmienić port klienta (default: 9000) to należy zmienić też w master-realm.json(konfiguracji keycloak)
+redirectUrl na http://localhost:{nowyPort}/* oraz nginx.conf w folderze client, żeby nasłuchiwał
+(listen : {nowyPort}).
+
+Kubernetes najpierw najlepiej włączyć: 
+
+kubectl apply -f ./kubernetes_files/client-deployment.yaml;
+kubectl apply -f ./kubernetes_files/db-deployment.yaml ;
+kubectl apply -f ./kubernetes_files/db-data-persistentvolumeclaim.yaml ;
+kubectl apply -f ./kubernetes_files/keycloak-deployment.yaml ;
+kubectl apply -f ./kubernetes_files/keycloak-cm0-configmap.yaml;
+kubectl apply -f ./kubernetes_files/redis-deployment.yaml ;
+kubectl apply -f ./kubernetes_files/redis-data-persistentvolumeclaim.yaml ;
+kubectl apply -f ./kubernetes_files/rabbitmq-deployment.yaml ;
+kubectl apply -f ./kubernetes_files/rabbitmq-service.yaml ;
+kubectl apply -f ./kubernetes_files/redis-service.yaml ;
+kubectl apply -f ./kubernetes_files/keycloak-service.yaml ;
+kubectl apply -f ./kubernetes_files/client-service.yaml ;
+kubectl apply -f ./kubernetes_files/db-service.yaml ;
+
+Odczekać około 30 sekund, żeby baza danych była zdrowa i serwer mógł poprawnie pracować.
+
+kubectl get pods
+
+kubectl apply -f ./kubernetes_files/server-deployment.yaml ;
+kubectl apply -f ./kubernetes_files/server-service.yaml ;
+
+

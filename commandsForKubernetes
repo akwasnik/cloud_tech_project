@@ -17,6 +17,8 @@ kompose convert
 
 # ustawic image na <dockerhub_username>/server:1.0.0 i <dockerhub_username>/client:1.0.0
 
+# ustawic w services Type: LoadBalancer
+
 
 kubectl apply -f ./kubernetes_files/client-deployment.yaml;
 kubectl apply -f ./kubernetes_files/db-deployment.yaml ;

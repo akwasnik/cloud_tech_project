@@ -8,6 +8,7 @@ metadata:
     io.kompose.service: server
   name: server
 spec:
+  type: LoadBalancer
   ports:
     - name: "3050"
       port: 3050

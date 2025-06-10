@@ -8,6 +8,7 @@ metadata:
     io.kompose.service: client
   name: client
 spec:
+  type: LoadBalancer
   ports:
     - name: "9000"
       port: 9000
